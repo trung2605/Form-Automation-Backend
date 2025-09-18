@@ -2,8 +2,7 @@
 import google.generativeai as genai
 import json
 import os
-
-genai.configure(api_key="AIzaSyCW3UPHGyFmMhLaS-07n6cFqA_gqoG05bw")
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 def parse_form_config(html_source):
     model = genai.GenerativeModel('gemini-1.5-flash-latest')
