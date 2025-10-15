@@ -100,6 +100,14 @@ def fill_form():
     emails = data.get('emails', [])
     form_config = data.get('formConfig', {})
     count = data.get('count', 1)
+    # maxDelay is the maximum random delay in seconds between submissions
+    # If not provided, default to 4 seconds
+    try:
+        max_delay = float(data.get('maxDelay', 4))
+        if max_delay < 0:
+            max_delay = 0
+    except (TypeError, ValueError):
+        max_delay = 4
 
     if not form_url or not submit_url or not form_config:
         return jsonify({"error": "Missing required parameters"}), 400
@@ -111,8 +119,9 @@ def fill_form():
         response_data = filler.generate_response_data(form_config)
         if filler.submit_form(response_data):
             success_count += 1
+        # Between submissions, wait for a random duration up to max_delay seconds
         if i < count - 1:
-            delay = random.uniform(2, 4)
+            delay = random.uniform(0, max_delay)
             time.sleep(delay)
 
     return jsonify({
