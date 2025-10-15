@@ -5,7 +5,12 @@ import os
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 def parse_form_config(html_source):
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    model = genai.GenerativeModel('gemini-2.5-flash')
+
+    for m in genai.list_models():
+        if "generateContent" in m.supported_generation_methods:
+            print(f"Tên mô hình khả dụng: {m.name}")
+
     prompt = f"""
     Bạn là một trợ lý phân tích HTML chuyên nghiệp.
     Mã nguồn HTML sau đây là một Google Form. Nhiệm vụ của bạn là trích xuất cấu hình biểu mẫu dưới dạng một đối tượng JSON.

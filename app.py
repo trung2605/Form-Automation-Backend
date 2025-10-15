@@ -5,6 +5,7 @@ import random
 import time
 import json
 from urllib.parse import urlencode
+import os
 from gemini_parser import parse_form_config
 
 app = Flask(__name__)
