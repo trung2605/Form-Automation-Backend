@@ -9,7 +9,7 @@ import os
 from gemini_parser import parse_form_config
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://form-automation-frontend.vercel.app", "http://localhost:3000"])
 
 class GoogleFormFiller:
     def __init__(self, form_url, submit_url, emails=None):
