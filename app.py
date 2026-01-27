@@ -20,7 +20,25 @@ class GoogleFormFiller:
 
     @staticmethod
     def weighted_choice(options, weights):
-        return random.choices(options, weights=weights, k=1)[0]
+        """
+        Chọn ngẫu nhiên có trọng số, với cơ chế an toàn.
+        """
+        # 1. Kiểm tra danh sách rỗng
+        if not options or not weights:
+            return None
+
+        # 2. Kiểm tra độ dài chênh lệch (để tránh lỗi logic)
+        if len(options) != len(weights):
+            # Nếu không khớp, ta lấy độ dài nhỏ nhất để tránh lỗi index
+            min_len = min(len(options), len(weights))
+            options = options[:min_len]
+            weights = weights[:min_len]
+
+        try:
+            return random.choices(options, weights=weights, k=1)[0]
+        except (IndexError, ValueError):
+            # Fallback: nếu lỗi, chọn ngẫu nhiên đều (hoặc trả về None)
+            return random.choice(options) if options else None
 
     def get_random_email(self):
         if not self.emails:
