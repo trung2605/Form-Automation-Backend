@@ -5,7 +5,7 @@ import os
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 def parse_form_config(html_source):
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 
     for m in genai.list_models():
         if "generateContent" in m.supported_generation_methods:
