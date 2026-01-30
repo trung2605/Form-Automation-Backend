@@ -5,51 +5,71 @@ import os
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 def parse_form_config(html_source):
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
     for m in genai.list_models():
         if "generateContent" in m.supported_generation_methods:
-            print(f"Tên mô hình khả dụng: {m.name}")
+            # print(f"Tên mô hình khả dụng: {m.name}") # Comment out to reduce noise
+            pass
     
     prompt = f"""
-    Bạn là một trợ lý phân tích HTML chuyên nghiệp.
-    Mã nguồn HTML sau đây là một Google Form. Nhiệm vụ của bạn là trích xuất cấu hình biểu mẫu dưới dạng một đối tượng JSON.
+    Bạn là một chuyên gia về cấu trúc dữ liệu Google Forms và Reverse Engineering.
+    Nhiệm vụ: Trích xuất cấu hình điền form từ mã nguồn HTML được cung cấp.
 
-    Định dạng JSON cần tuân theo mẫu sau:
+    QUAN TRỌNG:
+    Google Forms lưu trữ toàn bộ cấu trúc câu hỏi (bao gồm cả các trang ẩn, rẽ nhánh) trong một biến JavaScript có tên là `FB_PUBLIC_LOAD_DATA_`.
+    Đừng chỉ nhìn vào các thẻ HTML <input> vì chúng thường chỉ hiện thị trang đầu tiên.
+    Hãy tìm và phân tích mảng dữ liệu trong `FB_PUBLIC_LOAD_DATA_` để lấy danh sách ĐẦY ĐỦ các câu hỏi.
+
+    Yêu cầu đầu ra (JSON Object duy nhất):
     {{
-        "submitUrl": "string",
+        "submitUrl": "Tìm trong thẻ <form action='...'>, thường kết thúc bằng formResponse",
         "formConfig": {{
-            "entry.field_id_1": {{
-                "type": "string",
-                "options": "array",
-                "weights": "array"
-            }},
-            "entry.field_id_2": {{...}}
+            "entry.ID_CỦA_CÂU_HỎI": {{
+                "type": "loại câu hỏi",
+                "options": ["tùy chọn 1", "tùy chọn 2", ...],
+                "weights": [0.x, 0.y, ...] (Tổng các trọng số = 1, chia đều mặc định)
+            }}
         }}
     }}
 
-    Hãy làm theo các quy tắc sau:
-    1. Tìm 'action' của thẻ <form> để lấy 'submitUrl'.
-    2. Duyệt qua các trường nhập liệu để tìm 'entry ID' (thường có dạng entry.XXXXXXXXX) và tên trường.
-    3. Xác định loại trường:
-       - Nếu tên trường chứa từ "email", loại là "email".
-       - Nếu có các thẻ input radio hoặc label với thuộc tính data-value, loại là "choice".
-       - Nếu có các thẻ input checkbox, loại là "checkbox".
-       - Các trường còn lại là "text".
-    4. Đối với "choice" và "checkbox", hãy liệt kê tất cả các tùy chọn trong mảng "options". Gán trọng số đều nhau cho tất cả các tùy chọn.
-    5. Đối với trường "text" hoặc "email", mảng "options" có thể để trống.
-    6. Đảm bảo toàn bộ đầu ra là một đối tượng JSON hợp lệ và duy nhất.
+    Chi tiết về "formConfig":
+    1. Key là 'entry.ID': Tìm ID này trong dữ liệu (thường là số nguyên lớn). Hãy chắc chắn thêm tiền tố "entry." vào trước ID.
+    2. "type":
+       - "email": Nếu câu hỏi yêu cầu địa chỉ email.
+       - "choice": Trắc nghiệm (Radio), Menu thả xuống (Dropdown).
+       - "checkbox": Hộp kiểm (Checkbox) - Cho phép chọn nhiều.
+       - "text": Câu trả lời ngắn (Short answer), Đoạn văn (Paragraph).
+       - "date": Ngày tháng.
+       - "time": Giờ.
+    3. "options":
+       - BẮT BUỘC phải có cho "choice" và "checkbox".
+       - Liệt kê toàn bộ các text hiển thị của tùy chọn.
+       - Với "text", "date", "time", "email": để mảng rỗng [] hoặc null.
+    4. "weights":
+       - Tạo một mảng số thực có độ dài bằng mảng "options".
+       - Giá trị mặc định: chia đều (ví dụ 2 options thì [0.5, 0.5]).
+
+    Lưu ý xử lý:
+    - Bỏ qua các phần tiêu đề (HeaderImage, Description).
+    - Chỉ lấy các câu hỏi người dùng cần nhập.
+    - Nếu không tìm thấy `FB_PUBLIC_LOAD_DATA_`, hãy cố gắng fallback sang phân tích DOM HTML thông thường nhưng ưu tiên dữ liệu gốc.
+    - Đảm bảo JSON hợp lệ, không có trailing comma.
 
     Mã nguồn HTML:
-    {html_source}
+    {html_source[:100000]} ... (đã cắt bớt nếu quá dài) ... {html_source[-50000:]}
 
-    Trả về chỉ đối tượng JSON. KHÔNG thêm bất kỳ văn bản, giải thích hoặc code block nào khác.
+    Chỉ trả về JSON thuần túy, không Markdown.
     """
 
     try:
+        # Google Form HTML can be very large, Gemini Flash handles context well but let's be safe
+        # We pass the full source if possible, or truncate intelligently if needed knowing Flash has ~1M context window
+        # For now simply passing the source.
         response = model.generate_content(prompt)
         json_text = response.text.replace('```json', '').replace('```', '').strip()
-        return json.loads(json_text)
+        data = json.loads(json_text)
+        return data
     except Exception as e:
         print(f"Lỗi khi gọi API Gemini: {e}")
         return None
