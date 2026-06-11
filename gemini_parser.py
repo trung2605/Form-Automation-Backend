@@ -1,74 +1,131 @@
-# gemini_parser.py
 import google.generativeai as genai
 import json
 import os
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
+
+# Check key presence
+api_key = os.environ.get("GOOGLE_API_KEY")
+if not api_key:
+    print("❌ ERROR: GOOGLE_API_KEY not found in environment!")
+else:
+    print(f"✅ Gemini Parser loaded. Key found: {api_key[:8]}...")
 
 def parse_form_config(html_source):
     model = genai.GenerativeModel('gemini-2.5-flash')
 
-    for m in genai.list_models():
-        if "generateContent" in m.supported_generation_methods:
-            # print(f"Tên mô hình khả dụng: {m.name}") # Comment out to reduce noise
-            pass
-    
     prompt = f"""
     Bạn là một chuyên gia về cấu trúc dữ liệu Google Forms và Reverse Engineering.
-    Nhiệm vụ: Trích xuất cấu hình điền form từ mã nguồn HTML được cung cấp.
+    Nhiệm vụ: Trích xuất cấu hình điền form từ mã nguồn HTML được cung cấp để tạo payload gửi POST request.
 
     QUAN TRỌNG:
-    Google Forms lưu trữ toàn bộ cấu trúc câu hỏi (bao gồm cả các trang ẩn, rẽ nhánh) trong một biến JavaScript có tên là `FB_PUBLIC_LOAD_DATA_`.
-    Đừng chỉ nhìn vào các thẻ HTML <input> vì chúng thường chỉ hiện thị trang đầu tiên.
-    Hãy tìm và phân tích mảng dữ liệu trong `FB_PUBLIC_LOAD_DATA_` để lấy danh sách ĐẦY ĐỦ các câu hỏi.
+    1. Google Forms lưu dữ liệu câu hỏi trong biến `FB_PUBLIC_LOAD_DATA_`. Hãy ưu tiên phân tích mảng này.
+    2. Cần phân biệt chính xác ID của các trường.
+       - Hầu hết các câu hỏi (Input, Textarea, Radio, Checkbox) đều có name là "entry.ID" (ID là số).
+       - TRƯỜNG HỢP ĐẶC BIỆT: Nếu form có bật chế độ "Thu thập địa chỉ email" (Collect email addresses), input đó sẽ có name là "emailAddress" (không phải entry.ID). Hãy tìm kỹ input có `name="emailAddress"` hoặc `type="email"`.
 
     Yêu cầu đầu ra (JSON Object duy nhất):
     {{
-        "submitUrl": "Tìm trong thẻ <form action='...'>, thường kết thúc bằng formResponse",
+        "submitUrl": "Link action TUYỆT ĐỐI...",
+        "hiddenFields": {{
+            "key": "value"
+        }},
         "formConfig": {{
-            "entry.ID_CỦA_CÂU_HỎI": {{
+            "KEY_CỦA_TRƯỜNG": {{
+                "label": "Nội dung câu hỏi đầy đủ",
                 "type": "loại câu hỏi",
                 "options": ["tùy chọn 1", "tùy chọn 2", ...],
-                "weights": [0.x, 0.y, ...] (Tổng các trọng số = 1, chia đều mặc định)
+                "weights": [0.x, 0.y, ...]
             }}
         }}
     }}
 
-    Chi tiết về "formConfig":
-    1. Key là 'entry.ID': Tìm ID này trong dữ liệu (thường là số nguyên lớn). Hãy chắc chắn thêm tiền tố "entry." vào trước ID.
-    2. "type":
-       - "email": Nếu câu hỏi yêu cầu địa chỉ email.
-       - "choice": Trắc nghiệm (Radio), Menu thả xuống (Dropdown).
-       - "checkbox": Hộp kiểm (Checkbox) - Cho phép chọn nhiều.
-       - "text": Câu trả lời ngắn (Short answer), Đoạn văn (Paragraph).
-       - "date": Ngày tháng.
-       - "time": Giờ.
-    3. "options":
-       - BẮT BUỘC phải có cho "choice" và "checkbox".
-       - Liệt kê toàn bộ các text hiển thị của tùy chọn.
-       - Với "text", "date", "time", "email": để mảng rỗng [] hoặc null.
-    4. "weights":
-       - Tạo một mảng số thực có độ dài bằng mảng "options".
-       - Giá trị mặc định: chia đều (ví dụ 2 options thì [0.5, 0.5]).
+    Quy tắc cho "hiddenFields":
+    - Tìm toàn bộ thẻ <input type="hidden"> trong form.
+    - Lấy name và value của chúng.
+    - ĐẶC BIỆT QUAN TRỌNG: "fbzx" (thường id="uuid_..."), "fvv", "draftResponse", "pageHistory".
+    - Nếu không tìm thấy value, để trống.
 
-    Lưu ý xử lý:
-    - Bỏ qua các phần tiêu đề (HeaderImage, Description).
-    - Chỉ lấy các câu hỏi người dùng cần nhập.
-    - Nếu không tìm thấy `FB_PUBLIC_LOAD_DATA_`, hãy cố gắng fallback sang phân tích DOM HTML thông thường nhưng ưu tiên dữ liệu gốc.
-    - Đảm bảo JSON hợp lệ, không có trailing comma.
+    Quy tắc cho "KEY_CỦA_TRƯỜNG":
+    - Nếu là câu hỏi thường: Dùng "entry.ID" (Ví dụ: "entry.123456").
+    - Nếu là trường thu thập email tự động của Google: Dùng "emailAddress".
+    - Hãy chắc chắn ID là chính xác.
 
-    Mã nguồn HTML:
-    {html_source[:100000]} ... (đã cắt bớt nếu quá dài) ... {html_source[-50000:]}
+    Quy tắc cho "label":
+    - Lấy nội dung câu hỏi đầy đủ từ `FB_PUBLIC_LOAD_DATA_` tương ứng với ID đó.
+    - Nếu không tìm thấy, để chuỗi rỗng "".
 
-    Chỉ trả về JSON thuần túy, không Markdown.
+    Quy tắc cho "type":
+    - "email": Trường nhập email.
+    - "choice": Trắc nghiệm (Radio), Dropdown.
+    - "checkbox": Hộp kiểm (Checkbox).
+    - "text": Trả lời ngắn, Đoạn văn.
+    - "date": Ngày.
+    - "time": Giờ.
+
+    Quy tắc cho "options" và "weights":
+    - "choice", "checkbox": Mảng "options" chứa danh sách các lựa chọn text (BẮT BUỘC). Mảng "weights" chia đều tương ứng.
+    - Các loại khác: "options" là [].
+
+    Lưu ý:
+    - Bỏ qua các phần tiêu đề, hình ảnh trang trí.
+    - Dữ liệu `FB_PUBLIC_LOAD_DATA_` chứa cấu trúc lồng nhau, hãy phân tích kỹ để map đúng ID với câu hỏi.
+    - Trả về JSON hợp lệ.
+
+    Mã nguồn HTML (trích đoạn):
+    {html_source if len(html_source) < 150000 else html_source[:100000] + ' ... (clipped) ... ' + html_source[-50000:]}
     """
 
+    import re
+
+    def extract_hidden_fields_regex(html):
+        fields = {}
+        patterns = {
+            'fbzx': r'name="fbzx"\s+value="([^"]+)"',
+            'fvv': r'name="fvv"\s+value="([^"]+)"',
+            'pageHistory': r'name="pageHistory"\s+value="([^"]+)"',
+            'draftResponse': r'name="draftResponse"\s+value="([^"]+)"'
+        }
+
+        for key, pattern in patterns.items():
+            match = re.search(pattern, html)
+            if match:
+                fields[key] = match.group(1)
+
+        hidden_inputs = re.findall(r'<input\s+type="hidden"\s+name="([^"]+)"\s+value="([^"]*)"', html)
+        for name, value in hidden_inputs:
+            if name in ['fbzx', 'fvv', 'pageHistory', 'draftResponse'] or name.startswith('entry.'):
+                 fields[name] = value
+
+        return fields
+
     try:
-        # Google Form HTML can be very large, Gemini Flash handles context well but let's be safe
-        # We pass the full source if possible, or truncate intelligently if needed knowing Flash has ~1M context window
-        # For now simply passing the source.
-        response = model.generate_content(prompt)
-        json_text = response.text.replace('```json', '').replace('```', '').strip()
+        response = model.generate_content(
+            prompt,
+            generation_config={"response_mime_type": "application/json"}
+        )
+        raw = response.text if response.text else ""
+        print(f"[Gemini] finish_reason={response.candidates[0].finish_reason if response.candidates else 'N/A'}")
+        print(f"[Gemini] raw response (first 300 chars): {raw[:300]}")
+        json_text = raw.replace('```json', '').replace('```', '').strip()
+        # Strip any leading text before the JSON object
+        brace_idx = json_text.find('{')
+        if brace_idx > 0:
+            json_text = json_text[brace_idx:]
+        # Fix trailing commas
+        import re as _re
+        json_text = _re.sub(r',\s*([}\]])', r'\1', json_text)
         data = json.loads(json_text)
+
+        regex_hidden = extract_hidden_fields_regex(html_source)
+        if 'hiddenFields' not in data:
+            data['hiddenFields'] = {}
+
+        data['hiddenFields'].update(regex_hidden)
+
         return data
     except Exception as e:
         print(f"Lỗi khi gọi API Gemini: {e}")
