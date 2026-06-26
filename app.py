@@ -9,15 +9,19 @@ import os
 from ai_parser import parse_form_config
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False  # preserve insertion order in JSON responses
 CORS(app, origins=["https://form-automation-frontend.vercel.app", "http://localhost:3000"])
 
+
 class GoogleFormFiller:
-    def __init__(self, form_url, submit_url, emails=None, hidden_fields=None):
+    def __init__(self, form_url, submit_url, emails=None, hidden_fields=None, form_routing=None, form_config=None):
         self.form_url = form_url
         self.submit_url = submit_url
-        self.session = requests.Session()
         self.emails = emails or []
         self.hidden_fields = hidden_fields or {}
+        self.form_routing = form_routing or []
+        self.form_config = form_config or {}
+        self.session = requests.Session()
 
     @staticmethod
     def weighted_choice(options, weights):
@@ -95,6 +99,69 @@ class GoogleFormFiller:
         }
         post_data = []
         
+        
+        # 1. Routing Simulation & Data Sanitization
+        if self.form_routing and self.form_config:
+            visited_pages = [0]
+            current_page_idx = 0
+            
+            while current_page_idx < len(self.form_routing):
+                page_data = self.form_routing[current_page_idx]
+                next_target = None
+                
+                # Check for branching
+                for entry_key in page_data.get('entries', []):
+                    if entry_key in response_data and entry_key in self.form_config:
+                        cfg = self.form_config[entry_key]
+                        ans = response_data[entry_key]
+                        targets = cfg.get('optionTargets', {})
+                        if ans in targets:
+                            target = targets[ans]
+                            if target == '-2':
+                                # -2 means continue to next section
+                                next_target = None 
+                                break
+                            elif target == '0' or target == '-1':
+                                # Submit form
+                                next_target = -1
+                                break
+                            else:
+                                next_target = target
+                                break
+                                
+                if next_target == -1:
+                    break
+                elif next_target is not None:
+                    target_idx = None
+                    for i, p in enumerate(self.form_routing):
+                        if p.get('page_id') == next_target:
+                            target_idx = i
+                            break
+                    if target_idx is not None:
+                        current_page_idx = target_idx
+                        if current_page_idx not in visited_pages:
+                            visited_pages.append(current_page_idx)
+                    else:
+                        current_page_idx += 1
+                        if current_page_idx < len(self.form_routing):
+                            visited_pages.append(current_page_idx)
+                else:
+                    current_page_idx += 1
+                    if current_page_idx < len(self.form_routing):
+                        visited_pages.append(current_page_idx)
+            
+            # Filter response_data
+            valid_entries = set()
+            for idx in visited_pages:
+                if idx < len(self.form_routing):
+                    valid_entries.update(self.form_routing[idx].get('entries', []))
+                    
+            response_data = {k: v for k, v in response_data.items() if k in valid_entries or not str(k).startswith("entry.")}
+            
+            # Re-calculate pageHistory
+            self.hidden_fields['pageHistory'] = ",".join(str(x) for x in visited_pages)
+            print(f"[FormRouting] Visited pages: {visited_pages} -> pageHistory: {self.hidden_fields['pageHistory']}")
+        
         # Add required hidden fields for typical Google Forms
         # Use defaults if not provided in hidden_fields
         if 'pageHistory' not in self.hidden_fields:
@@ -102,7 +169,8 @@ class GoogleFormFiller:
         if 'fvv' not in self.hidden_fields:
             post_data.append(('fvv', '1'))
         if 'draftResponse' not in self.hidden_fields:
-            post_data.append(('draftResponse', '[]'))
+            fbzx_val = self.hidden_fields.get('fbzx', '')
+            post_data.append(('draftResponse', f'[null,null,"{fbzx_val}"]'))
             
         # Add dynamic hidden fields extracted by Gemini (e.g., fbzx)
         for k, v in self.hidden_fields.items():
@@ -196,6 +264,7 @@ def fill_form():
     emails = data.get('emails', [])
     form_config = data.get('formConfig', {})
     hidden_fields = data.get('hiddenFields', {})
+    form_routing = data.get('formRouting', [])
     count = data.get('count', 1)
     # maxDelay is the maximum random delay in seconds between submissions
     # If not provided, default to 4 seconds
@@ -235,7 +304,7 @@ def fill_form():
         if not submit_url.endswith("formResponse"):
              submit_url = submit_url.rstrip('/') + "/formResponse"
 
-    filler = GoogleFormFiller(form_url, submit_url, emails=emails, hidden_fields=hidden_fields)
+    filler = GoogleFormFiller(form_url, submit_url, emails=emails, hidden_fields=hidden_fields, form_routing=form_routing, form_config=form_config)
     
     success_count = 0
     for i in range(count):

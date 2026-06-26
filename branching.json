@@ -1,0 +1,137 @@
+[
+  [],
+  [
+    {
+      "id": 1973638413,
+      "title": "01. Giới tính:",
+      "options": [
+        {
+          "value": "Nam",
+          "target": 0
+        },
+        {
+          "value": "Nữ",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "id": 1308751871,
+      "title": "02. Nghề nghiệp:",
+      "options": [
+        {
+          "value": "Học sinh/ Sinh viên",
+          "target": 0
+        },
+        {
+          "value": "Nhân viên văn phòng",
+          "target": 0
+        },
+        {
+          "value": "Kinh doanh tự do",
+          "target": 0
+        },
+        {
+          "value": "Công chức / Viên chức",
+          "target": 0
+        },
+        {
+          "value": "",
+          "target": 1
+        }
+      ]
+    },
+    {
+      "id": 482028411,
+      "title": "03. Thu nhập trung bình hàng tháng:",
+      "options": [
+        {
+          "value": "< 3 triệu VNĐ",
+          "target": 0
+        },
+        {
+          "value": "Từ 3 - 7 triệu VNĐ",
+          "target": 0
+        },
+        {
+          "value": "Từ 7 - 10 triệu VNĐ",
+          "target": 0
+        },
+        {
+          "value": "> 10 triệu VNĐ",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "id": 1002380681,
+      "title": "04.  Độ tuổi: ",
+      "options": [
+        {
+          "value": "Dưới 18 tuổi",
+          "target": 0
+        },
+        {
+          "value": "18 – 22 tuổi",
+          "target": 0
+        },
+        {
+          "value": "23 – 30 tuổi",
+          "target": 0
+        },
+        {
+          "value": "31 – 40 tuổi",
+          "target": 0
+        },
+        {
+          "value": "Trên 40 tuổi",
+          "target": 0
+        }
+      ]
+    },
+    {
+      "id": 95443666,
+      "title": "05. Trong 6 tháng gần đây, Anh/Chị có thực hiện hoạt động mua sắm hoặc sử dụng dịch vụ tại cửa hàng, nhà hàng, quán cà phê, trung tâm thương mại hoặc trên các nền tảng trực tuyến không? ",
+      "options": [
+        {
+          "value": "Có",
+          "target": 0
+        },
+        {
+          "value": "Không",
+          "target": 0
+        }
+      ]
+    }
+  ],
+  [],
+  [],
+  [
+    {
+      "id": 618847587,
+      "title": "Anh/Chị nhận khảo sát này từ thành viên:",
+      "options": [
+        {
+          "value": "Võ Trần Nhật Diệu",
+          "target": 0
+        },
+        {
+          "value": "Huỳnh Nguyễn Yến Nhi",
+          "target": 0
+        },
+        {
+          "value": "Nguyễn Quỳnh Như",
+          "target": 0
+        },
+        {
+          "value": "Nguyễn Thảo Nguyên",
+          "target": 0
+        },
+        {
+          "value": "Lê Như Quỳnh",
+          "target": 0
+        }
+      ]
+    }
+  ]
+]

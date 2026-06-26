@@ -1,0 +1,541 @@
+{
+  "_provider": "NativeParser",
+  "formConfig": {
+    "entry.1002380681": {
+      "group": null,
+      "label": "04.  Độ tuổi:",
+      "optionTargets": {},
+      "options": [
+        "Dưới 18 tuổi",
+        "18 – 22 tuổi",
+        "23 – 30 tuổi",
+        "31 – 40 tuổi",
+        "Trên 40 tuổi"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1047231496": {
+      "group": "1. Thị giác (Visual Marketing)",
+      "label": "1. Thị giác (Visual Marketing) — Cách bố trí và thiết kế không gian tạo cho Anh/Chị cảm giác dễ chịu.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1081527307": {
+      "group": "Hành vi tiêu dùng",
+      "label": "Hành vi tiêu dùng — Anh/Chị có ý định mua lại sản phẩm/dịch vụ này trong tương lai.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1179889433": {
+      "group": "1. Thị giác (Visual Marketing)",
+      "label": "1. Thị giác (Visual Marketing) — Màu sắc trong không gian mua sắm thu hút sự chú ý của Anh/Chị.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1232160032": {
+      "group": "4.  Vị giác (Taste Marketing)",
+      "label": "4.  Vị giác (Taste Marketing) — Hương vị sản phẩm khiến Anh/Chị muốn mua lại.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1267049446": {
+      "group": "5.  Xúc giác (Tactile Marketing)",
+      "label": "5.  Xúc giác (Tactile Marketing) — Chất liệu sản phẩm tạo cho Anh/Chị cảm giác về chất lượng cao.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1308751871": {
+      "group": null,
+      "label": "02. Nghề nghiệp:",
+      "optionTargets": {},
+      "options": [
+        "Học sinh/ Sinh viên",
+        "Nhân viên văn phòng",
+        "Kinh doanh tự do",
+        "Công chức / Viên chức"
+      ],
+      "type": "choice",
+      "weights": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "entry.1368106785": {
+      "group": "5.  Xúc giác (Tactile Marketing)",
+      "label": "5.  Xúc giác (Tactile Marketing) — Anh/Chị  thích cảm giác khi được chạm/tiếp xúc trực tiếp vào sản phẩm.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1371892502": {
+      "group": "Hành vi tiêu dùng",
+      "label": "Hành vi tiêu dùng — Anh/Chị sẵn sàng chi tiêu nhiều hơn cho thương hiệu mang lại trải nghiệm tốt.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1397240149": {
+      "group": "3. Khứu giác (Olfactory Marketing)",
+      "label": "3. Khứu giác (Olfactory Marketing) — Mùi hương làm tăng cảm xúc tích cực khi mua sắm.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1429480727": {
+      "group": "Hành vi tiêu dùng",
+      "label": "Hành vi tiêu dùng — Anh/Chị có xu hướng mua sản phẩm khi có trải nghiệm giác quan tích cực.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1512694949": {
+      "group": "2. Thính giác (Auditory Marketing)",
+      "label": "2. Thính giác (Auditory Marketing) — Âm nhạc khiến Anh/Chị muốn ở lại cửa hàng lâu hơn.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1605955978": {
+      "group": "2. Thính giác (Auditory Marketing)",
+      "label": "2. Thính giác (Auditory Marketing) — Âm nhạc tại cửa hàng tạo cho Anh/Chị cảm giác thoải mái.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.1973638413": {
+      "group": null,
+      "label": "01. Giới tính:",
+      "optionTargets": {},
+      "options": [
+        "Nam",
+        "Nữ"
+      ],
+      "type": "choice",
+      "weights": [
+        0.5,
+        0.5
+      ]
+    },
+    "entry.420930097": {
+      "group": "Hành vi tiêu dùng",
+      "label": "Hành vi tiêu dùng — Anh/Chị sẵn sàng giới thiệu thương hiệu này cho người khác.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.482028411": {
+      "group": null,
+      "label": "03. Thu nhập trung bình hàng tháng:",
+      "optionTargets": {},
+      "options": [
+        "< 3 triệu VNĐ",
+        "Từ 3 - 7 triệu VNĐ",
+        "Từ 7 - 10 triệu VNĐ",
+        "> 10 triệu VNĐ"
+      ],
+      "type": "choice",
+      "weights": [
+        0.25,
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "entry.518230378": {
+      "group": "4.  Vị giác (Taste Marketing)",
+      "label": "4.  Vị giác (Taste Marketing) — Trải nghiệm vị giác ảnh hưởng đến quyết định mua hàng của Anh/Chị.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.531258699": {
+      "group": "3. Khứu giác (Olfactory Marketing)",
+      "label": "3. Khứu giác (Olfactory Marketing) — Mùi hương tại cửa hàng tạo cho Anh/Chị cảm giác dễ chịu.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.618847587": {
+      "group": null,
+      "label": "Anh/Chị nhận khảo sát này từ thành viên:",
+      "optionTargets": {},
+      "options": [
+        "Võ Trần Nhật Diệu",
+        "Huỳnh Nguyễn Yến Nhi",
+        "Nguyễn Quỳnh Như",
+        "Nguyễn Thảo Nguyên",
+        "Lê Như Quỳnh"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.725233664": {
+      "group": "3. Khứu giác (Olfactory Marketing)",
+      "label": "3. Khứu giác (Olfactory Marketing) — Mùi hương khiến Anh/Chị muốn quay lại cửa hàng.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.759826488": {
+      "group": "4.  Vị giác (Taste Marketing)",
+      "label": "4.  Vị giác (Taste Marketing) — Hương vị sản phẩm đáp ứng đúng mong đợi của Anh/Chị.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.798651620": {
+      "group": "5.  Xúc giác (Tactile Marketing)",
+      "label": "5.  Xúc giác (Tactile Marketing) — Trải nghiệm xúc giác ảnh hưởng trực tiếp đến quyết định mua hàng của Anh/Chị.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "entry.95443666": {
+      "group": null,
+      "label": "05. Trong 6 tháng gần đây, Anh/Chị có thực hiện hoạt động mua sắm hoặc sử dụng dịch vụ tại cửa hàng, nhà hàng, quán cà phê, trung tâm thương mại hoặc trên các nền tảng trực tuyến không?",
+      "optionTargets": {
+        "Có": "-2",
+        "Không": "1549990064"
+      },
+      "options": [
+        "Có",
+        "Không"
+      ],
+      "type": "choice",
+      "weights": [
+        0.5,
+        0.5
+      ]
+    },
+    "entry.995671691": {
+      "group": "1. Thị giác (Visual Marketing)",
+      "label": "1. Thị giác (Visual Marketing) — Hình ảnh trưng bày sản phẩm gây ấn tượng tích cực.",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "type": "choice",
+      "weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    }
+  },
+  "formRouting": [
+    {
+      "entries": [],
+      "page_id": null,
+      "page_index": 0
+    },
+    {
+      "entries": [
+        "entry.1973638413",
+        "entry.1308751871",
+        "entry.482028411",
+        "entry.1002380681",
+        "entry.95443666"
+      ],
+      "page_id": "580714941",
+      "page_index": 1
+    },
+    {
+      "entries": [
+        "entry.1179889433",
+        "entry.1047231496",
+        "entry.995671691",
+        "entry.1605955978",
+        "entry.1512694949",
+        "entry.531258699",
+        "entry.1397240149",
+        "entry.725233664",
+        "entry.759826488",
+        "entry.1232160032",
+        "entry.518230378",
+        "entry.1368106785",
+        "entry.1267049446",
+        "entry.798651620"
+      ],
+      "page_id": "1351480104",
+      "page_index": 2
+    },
+    {
+      "entries": [
+        "entry.1429480727",
+        "entry.1371892502",
+        "entry.1081527307",
+        "entry.420930097"
+      ],
+      "page_id": "1549990064",
+      "page_index": 3
+    },
+    {
+      "entries": [
+        "entry.618847587"
+      ],
+      "page_id": "771702824",
+      "page_index": 4
+    }
+  ],
+  "hiddenFields": {
+    "fbzx": "4196305754507212441",
+    "fvv": "1",
+    "pageHistory": "0,1,2,3,4",
+    "submissionTimestamp": "-1"
+  },
+  "questionOrder": [
+    "entry.1973638413",
+    "entry.1308751871",
+    "entry.482028411",
+    "entry.1002380681",
+    "entry.95443666",
+    "entry.1179889433",
+    "entry.1047231496",
+    "entry.995671691",
+    "entry.1605955978",
+    "entry.1512694949",
+    "entry.531258699",
+    "entry.1397240149",
+    "entry.725233664",
+    "entry.759826488",
+    "entry.1232160032",
+    "entry.518230378",
+    "entry.1368106785",
+    "entry.1267049446",
+    "entry.798651620",
+    "entry.1429480727",
+    "entry.1371892502",
+    "entry.1081527307",
+    "entry.420930097",
+    "entry.618847587"
+  ]
+}
