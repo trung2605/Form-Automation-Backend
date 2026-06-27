@@ -194,37 +194,49 @@ def _parse_native(html):
         sub_items = item[4] if len(item) > 4 and isinstance(item[4], list) else []
 
         if item_type == 7:
-            # Grid / Matrix: multiple entry IDs, one per row
-            # Columns (scale options) are the same for all rows
-            # sub_items is a list of groups: each group[0]=entry_id, group[1]=row_labels (list)
-            # The column options are stored differently depending on the form
-            # Typically: sub_items[i] = [entry_id, [[col_text,...]], ...]
-            # Rows are the sub-questions, columns are the rating options
+            # Grid / Matrix (Likert scale): item[4] = list of row sub-items
+            # Structure for each sub-item:
+            #   sub[0] = entry_id (int)
+            #   sub[1] = [[col_text, ...], ...] (column options, shared across rows)
+            #   sub[3] = [row_label, ...] (row label list)
+            # The column options are the same for every row — read from sub_items[0][1]
 
-            # Find column options from the first sub-item
+            print(f"[NativeParser] Grid item '{label}', sub_items count={len(sub_items)}")
+            if sub_items:
+                print(f"[NativeParser]   sub_items[0] preview: {str(sub_items[0])[:300]}")
+
+            # Build column options from the first sub-item
             col_options = []
-            if sub_items and len(sub_items[0]) > 1 and isinstance(sub_items[0][1], list):
-                for opt in sub_items[0][1]:
-                    if isinstance(opt, list) and opt:
-                        opt_text = opt[0]
-                        if isinstance(opt_text, str) and opt_text:
-                            col_options.append(opt_text)
+            if sub_items and isinstance(sub_items[0], list) and len(sub_items[0]) > 1:
+                col_src = sub_items[0][1]
+                if isinstance(col_src, list):
+                    for opt in col_src:
+                        if isinstance(opt, list) and opt:
+                            opt_text = str(opt[0]).strip()
+                            if opt_text:
+                                col_options.append(opt_text)
+
+            print(f"[NativeParser]   col_options={col_options}")
 
             for group in sub_items:
-                if not isinstance(group, list) or len(group) < 2:
+                if not isinstance(group, list) or len(group) < 1:
                     continue
                 entry_id = group[0]
                 if not entry_id:
                     continue
 
-                # Row label is in group[3] or similar
+                # Row label: try index 3 first (list), then index 1 direct string
                 row_label = ""
-                if len(group) > 3 and isinstance(group[3], list):
-                    row_label_raw = group[3][0] if group[3] else ""
-                    row_label = re.sub(r'<[^>]+>', '', str(row_label_raw)).strip()
+                if len(group) > 3:
+                    rl = group[3]
+                    if isinstance(rl, list) and rl:
+                        row_label = re.sub(r'<[^>]+>', '', str(rl[0])).strip()
+                    elif isinstance(rl, str):
+                        row_label = re.sub(r'<[^>]+>', '', rl).strip()
+                if not row_label and len(group) > 1 and isinstance(group[1], str):
+                    row_label = re.sub(r'<[^>]+>', '', group[1]).strip()
 
-                row_label_clean = row_label if row_label else ""
-                field_label = f"{label} — {row_label_clean}" if row_label_clean else label
+                field_label = f"{label} — {row_label}" if row_label else label
                 weights = [1 / len(col_options)] * len(col_options) if col_options else []
 
                 key = f"entry.{entry_id}"
@@ -233,7 +245,7 @@ def _parse_native(html):
                     "type": "choice",
                     "options": col_options,
                     "weights": weights,
-                    "group": label  # parent grid question title
+                    "group": label
                 }
                 question_order.append(key)
                 current_page_entries.append(key)
