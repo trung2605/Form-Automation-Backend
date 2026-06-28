@@ -13,3 +13,8 @@ class Config:
     # JWT
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-super-secret-key'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+    
+    # PayOS
+    PAYOS_CLIENT_ID = os.environ.get('PAYOS_CLIENT_ID')
+    PAYOS_API_KEY = os.environ.get('PAYOS_API_KEY')
+    PAYOS_CHECKSUM_KEY = os.environ.get('PAYOS_CHECKSUM_KEY')

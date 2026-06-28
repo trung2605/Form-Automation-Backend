@@ -26,9 +26,13 @@ def create_app(config_class=Config):
     from app.controllers.auth import auth_bp
     from app.controllers.payment import payment_bp
     from app.controllers.forms import forms_bp
+    from app.controllers.admin import admin_bp
+    from app.controllers.tool import tool_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(payment_bp, url_prefix='/api/payment')
     app.register_blueprint(forms_bp, url_prefix='/api/forms')
+    app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(tool_bp, url_prefix='/api/tools')
 
     return app

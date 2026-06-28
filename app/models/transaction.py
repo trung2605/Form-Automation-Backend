@@ -6,6 +6,7 @@ class Transaction(db.Document):
     
     user_id = db.StringField(required=True)
     amount = db.IntField(required=True)
+    order_code = db.IntField(unique=True, sparse=True)
     transaction_type = db.StringField(required=True, max_length=50)
     status = db.StringField(default='completed', max_length=20)
     description = db.StringField(max_length=255)

@@ -7,6 +7,7 @@ from app.models.transaction import Transaction
 from app.services.ai_parser import parse_form_config
 from app.services.form_filler import GoogleFormFiller
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.utils.decorators import check_banned
 
 forms_bp = Blueprint('forms', __name__)
 
@@ -53,6 +54,7 @@ def analyze_form():
 
 @forms_bp.route('/fill-form', methods=['OPTIONS', 'POST', 'GET'])
 @jwt_required(optional=True) # Making it optional for now, but you might want to enforce it
+@check_banned()
 def fill_form():
     if request.method == 'OPTIONS':
         return '', 200
